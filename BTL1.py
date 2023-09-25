@@ -43,15 +43,15 @@ def linear():
     linearReg.fit(trainFoldListX[fitDataIndex],trainFoldListY[fitDataIndex]) ## Retrain model with the data
     predict = linearReg.predict(xTest) ## Predict with test data
     train_set = linearReg.predict(xTrain) ## Predict with train data
-    # return {'Title':'LinearRegression k-fold coss validation',
-    # 'R2 score': r2_score(yTest, predict),
-    # 'Score NSE': nse(yTest, predict),
+    return {'Title':'LinearRegression k-fold coss validation',
+    'R2 score': r2_score(yTest, predict),
+    'Score NSE': nse(yTest, predict),
     # 'Score NSE by hydroeval': evaluator(nse, predict, yTest),
-    # 'Score MAE': mean_absolute_error(yTest, predict),
-    # 'Score RMSE': mean_squared_error(yTest, predict)**0.5,
-    # 'Test error': train_test_err(yTest.tolist(), predict.tolist()),
-    # 'Train error': train_test_err(yTrain.tolist(), train_set.tolist())}
-    return predict.tolist()
+    'Score MAE': mean_absolute_error(yTest, predict),
+    'Score RMSE': mean_squared_error(yTest, predict)**0.5,
+    'Test error': train_test_err(yTest.tolist(), predict.tolist()),
+    'Train error': train_test_err(yTrain.tolist(), train_set.tolist())}
+    # return predict.tolist()
             
 ### Lasso
 def lasso():
@@ -59,15 +59,15 @@ def lasso():
     lassoReg.fit(xTrain, yTrain)
     predict = numpy.array(lassoReg.predict(xTest))
     train_set = lassoReg.predict(xTrain)
-    # return {'Title': 'Lasso',
-    # 'R2 score': r2_score(yTest, predict),
-    # 'Score NSE': nse(yTest, predict),
+    return {'Title': 'Lasso',
+    'R2 score': r2_score(yTest, predict),
+    'Score NSE': nse(yTest, predict),
     # 'Score NSE by hydroeval': evaluator(nse, predict, yTest),
-    # 'Score MAE': mean_absolute_error(yTest, predict),
-    # 'Score RMSE': mean_squared_error(yTest, predict)**0.5,
-    # 'Test error': train_test_err(yTest.tolist(), predict.tolist()),
-    # 'Train error': train_test_err(yTrain.tolist(), train_set.tolist())}
-    return predict.tolist()
+    'Score MAE': mean_absolute_error(yTest, predict),
+    'Score RMSE': mean_squared_error(yTest, predict)**0.5,
+    'Test error': train_test_err(yTest.tolist(), predict.tolist()),
+    'Train error': train_test_err(yTrain.tolist(), train_set.tolist())}
+    # return predict.tolist()
 
 
 ### Ridge
@@ -76,16 +76,62 @@ def ridge():
     ridgeReg.fit(xTrain, yTrain)
     predict = ridgeReg.predict(xTest)
     train_set = ridgeReg.predict(xTrain)
-    # return {'Title': 'Ridge',
-    # 'R2 score': r2_score(yTest, predict),
-    # 'Score NSE': nse(yTest, predict),
+    return {'Title': 'Ridge',
+    'R2 score': r2_score(yTest, predict),
+    'Score NSE': nse(yTest, predict),
     # 'Score NSE by hydroeval': evaluator(nse, predict, yTest),
-    # 'Score MAE': mean_absolute_error(yTest, predict),
-    # 'Score RMSE': mean_squared_error(yTest, predict)**0.5,
-    # 'Test error': train_test_err(yTest.tolist(), predict.tolist()),
-    # 'Train error': train_test_err(yTrain.tolist(), train_set.tolist())}
-    return predict.tolist()
+    'Score MAE': mean_absolute_error(yTest, predict),
+    'Score RMSE': mean_squared_error(yTest, predict)**0.5,
+    'Test error': train_test_err(yTest.tolist(), predict.tolist()),
+    'Train error': train_test_err(yTrain.tolist(), train_set.tolist())}
+    # return predict.tolist()
 
+def graph(li, la, ri):
+    plt.suptitle('BLT')
+    ## Study hours
+    plt.subplot(2, 3, 1)
+    plt.title('LinearReg')
+    plt.ylabel('Performance index')
+    plt.plot(xTest[:100, 0], yTest[:100], 'ro')
+    plt.plot(xTest[:100, 0], li[:100], 'y>')
+
+    plt.subplot(2, 3, 2)
+    plt.title('Ridge')
+    plt.plot(xTest[:100, 0], yTest[:100], 'mo')
+    plt.plot(xTest[:100, 0], ri[:100], 'g<')
+
+
+    plt.subplot(2, 3, 3)
+    plt.title('Lasso')
+    plt.plot(xTest[:100, 0], yTest[:100], 'mo')
+    plt.plot(xTest[:100, 0], la[:100], 'b^')
+
+    ##Previous Scores
+    plt.subplot(2, 3, 4)
+    # plt.title('LinearReg')
+    plt.ylabel('Performance index')
+    plt.plot(xTest[:100, 1], yTest[:100], 'ro')
+    plt.plot(xTest[:100, 1], li[:100], 'y>')
+
+    plt.subplot(2, 3, 5)
+    # plt.title('Ridge')
+    plt.plot(xTest[:100, 1], yTest[:100], 'mo')
+    plt.plot(xTest[:100, 1], ri[:100], 'g<')
+
+
+    plt.subplot(2, 3, 6)
+    # plt.title('Lasso')
+    plt.plot(xTest[:100, 1], yTest[:100], 'mo')
+    plt.plot(xTest[:100, 1], la[:100], 'b^')
+
+
+    plt.show()
+
+def graphR2(li, la, ri):
+    plt.title('R2 score')
+    plt.plot(['Linear Regression', 'Lasso', 'Ridge'],[r2_score(yTest, li), r2_score(yTest, la), r2_score(yTest, ri)],scaley=50)
+    # plt.axes()
+    plt.show()
 
 data = pandas.read_csv('Student_Performance.csv') ## Load data
 
@@ -93,55 +139,17 @@ dTrain, dTest = train_test_split(data, test_size=0.3, shuffle=False) ## Split da
 xTrain, yTrain = numpy.array(dTrain.iloc[:,:5]), numpy.array(dTrain.iloc[:,5]) ## Data train model
 xTest, yTest = numpy.array(dTest.iloc[:,:5]), numpy.array(dTest.iloc[:,5])  ## Data test model
 
-# ll = [lasso(), ridge(), linear()] ## List models
-# ll.sort(key=lambda d: d['R2 score'], reverse=True) ## Sort model by key (R2 score) descending
+ll = [lasso(), ridge(), linear()] ## List models
+ll.sort(key=lambda d: d['R2 score'], reverse=True) ## Sort model by key (R2 score) descending
 
-# ### Print
-# for i in ll:
-#     for j in i:
-#         print(j, ': ', i[j], sep='')
-#     print()
+### Print
+for i in ll:
+    for j in i:
+        print(j, ': ', i[j], sep='')
+    print()
  
-li = linear()
-la = lasso()
-ri = ridge()
+# li = linear()
+# la = lasso()
+# ri = ridge()
 
-plt.suptitle('BLT')
-## Study hours
-plt.subplot(2, 3, 1)
-plt.title('LinearReg')
-plt.ylabel('Performance index')
-plt.plot(xTest[:100, 0], yTest[:100], 'ro')
-plt.plot(xTest[:100, 0], li[:100], 'y>')
-
-plt.subplot(2, 3, 2)
-plt.title('Ridge')
-plt.plot(xTest[:100, 0], yTest[:100], 'mo')
-plt.plot(xTest[:100, 0], ri[:100], 'g<')
-
-
-plt.subplot(2, 3, 3)
-plt.title('Lasso')
-plt.plot(xTest[:100, 0], yTest[:100], 'mo')
-plt.plot(xTest[:100, 0], la[:100], 'b^')
-
-##Previous Scores
-plt.subplot(2, 3, 4)
-# plt.title('LinearReg')
-plt.ylabel('Performance index')
-plt.plot(xTest[:100, 1], yTest[:100], 'ro')
-plt.plot(xTest[:100, 1], li[:100], 'y>')
-
-plt.subplot(2, 3, 5)
-# plt.title('Ridge')
-plt.plot(xTest[:100, 1], yTest[:100], 'mo')
-plt.plot(xTest[:100, 1], ri[:100], 'g<')
-
-
-plt.subplot(2, 3, 6)
-# plt.title('Lasso')
-plt.plot(xTest[:100, 1], yTest[:100], 'mo')
-plt.plot(xTest[:100, 1], la[:100], 'b^')
-
-
-plt.show()
+# graphR2(li, la, ri)
